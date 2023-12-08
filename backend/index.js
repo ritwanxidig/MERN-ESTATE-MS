@@ -17,6 +17,8 @@ mongoose
 
 const app = express();
 
+app.use(express.json());
+
 app.listen(5555, () => {
   console.log("app listening port 5555");
 });
