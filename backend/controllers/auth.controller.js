@@ -7,10 +7,7 @@ export const signUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password)
-      return errorHandler(
-        400,
-        "Username, email, and password are required"
-      );
+      next(errorHandler(400, "Username, email, and password are required"));
     const hashedPassword = bcryptjs.hashSync(password, 10);
     var newUser = new userModel({ username, email, password: hashedPassword });
     await newUser.save();

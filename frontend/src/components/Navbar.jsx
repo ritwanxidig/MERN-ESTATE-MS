@@ -25,8 +25,15 @@ const Navbar = () => {
                     <Input placeholder='Search' />
                 </div>
 
-                <div>
-                    <Link to='/sign-in'>SignIn</Link>
+                <div className='flex gap-4'>
+                    <Link
+                        to='/sign-in'
+                        className='bg-green-500 rounded-full px-4 py-1 text-white '
+                    >SignIn</Link>
+                    <Link
+                        to='/sign-up'
+                        className='bg-blue-500 rounded-full px-4 py-1 text-white '
+                    >SignUp</Link>
                 </div>
             </div>
         </nav>
