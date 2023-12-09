@@ -4,6 +4,7 @@ import { Tags, QueryEndpoint, PostEndpoint } from "./helpers";
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5555",
+    credentials: "include",
     prepareHeaders: (headers) => {
       headers.set("content-type", "application/json");
       return headers;
@@ -14,7 +15,7 @@ export const api = createApi({
     getAllUsers: QueryEndpoint(builder, "/users"),
 
     // auth endpoints
-    login: PostEndpoint(builder, "/auth/login"),
+    login: PostEndpoint(builder, "/auth/signIn"),
     signUp: PostEndpoint(builder, "/auth/signUp"),
   }),
 });
