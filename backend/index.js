@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import userRoutes from "./routes/userRoutes.js";
+import authRouter from "./routes/authRouter.js";
+import { ExceptionHandlerMiddleware } from "./middlewares/index.js";
 
 dotenv.config();
 
@@ -24,3 +26,6 @@ app.listen(5555, () => {
 });
 
 app.use("/users", userRoutes);
+app.use("/auth", authRouter);
+
+app.use(ExceptionHandlerMiddleware);
