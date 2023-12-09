@@ -6,6 +6,8 @@ import FormGroup from '../components/FormGroup'
 import { useNavigate } from 'react-router-dom'
 
 import { useLoginMutation } from '../app/services/api'
+import { signInSuccess, signInFailure } from '../app/reducers/auth.slice'
+import { useDispatch, useSelector } from 'react-redux'
 
 
 const validationSchema = yup.object().shape({
@@ -15,6 +17,12 @@ const validationSchema = yup.object().shape({
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { error, loading, currentUser } = useSelector(state => state.auth)
+  console.log(error);
+  console.log(loading);
+  console.log(currentUser);
 
   const [login, { isLoading }] = useLoginMutation();
 
@@ -28,13 +36,17 @@ const SignIn = () => {
       try {
         login(values).unwrap()
           .then(res => {
-            console.log(res);
-            alert("Log in successfully");
-            navigate('/')
+            dispatch(signInSuccess(res))
+            // alert("Log in successfully");
+            // navigate('/')
           })
-          .catch(er => console.log(er))
+          .catch(er => {
+            console.log(er);
+            signInFailure(er)
+          })
       } catch (error) {
         console.log(error)
+        signInFailure(error);
       }
     }
   })
