@@ -41,3 +41,50 @@ export const signIn = async (req, res, next) => {
     next(error);
   }
 };
+
+export const signWithGoogle = async (req, res, next) => {
+  try {
+    const { name, email, photo } = req.body;
+    if (!name || !email || !photo)
+      return next(errorHandler(400, "name, email and photo are required"));
+    const existUser = await userModel.findOne({ email });
+    if (existUser) {
+      const token = jwt.sign({ id: existUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...otherInfo } = existUser._doc;
+      return res
+        .cookie("access-token", token, { httpOnly: true })
+        .status(200)
+        .json(otherInfo);
+    } else {
+      // generate password
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+
+      // generate username
+      const generatedUsername =
+        name.split(" ").join("").toLowerCase() +
+        Math.random().toString().slice(-4);
+
+      // then create the new user
+      const newUser = new userModel({
+        username: generatedUsername,
+        email,
+        password: hashedPassword,
+        avatar: photo,
+      });
+
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = newUser._doc;
+      res
+        .cookie("access-token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
+    }
+  } catch (error) {
+    next(error);
+  }
+};

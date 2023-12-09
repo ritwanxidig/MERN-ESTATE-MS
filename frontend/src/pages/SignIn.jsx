@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useLoginMutation } from '../app/services/api'
 import { signInSuccess, signInFailure } from '../app/reducers/auth.slice'
 import { useDispatch, useSelector } from 'react-redux'
+import GoogleAuth from '../components/GoogleAuth'
 
 
 const validationSchema = yup.object().shape({
@@ -19,11 +20,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { error, loading, currentUser } = useSelector(state => state.auth)
-  console.log(error);
-  console.log(loading);
-  console.log(currentUser);
-
+  // const { error, loading, currentUser } = useSelector(state => state.auth)
   const [login, { isLoading }] = useLoginMutation();
 
   const formik = useFormik({
@@ -69,7 +66,7 @@ const SignIn = () => {
         </FormGroup>
         <div>
           <button className='button-design bg-blue-500 text-white' disabled={isLoading} type='submit' onClick={handleSubmit}>{isLoading ? 'Loading' : 'Login'}</button>
-          <button className='button-design bg-green-500 text-white'> Continue with Google</button>
+          <GoogleAuth />
         </div>
       </div>
     </div>

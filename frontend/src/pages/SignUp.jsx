@@ -5,6 +5,7 @@ import { useFormik } from 'formik'
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
+import GoogleAuth from '../components/GoogleAuth'
 
 
 
@@ -75,8 +76,8 @@ const SignUp = () => {
           {errors.confirmPassword && touched.confirmPassword && <div className='text-red-600'>{errors.confirmPassword}</div>}
         </FormGroup>
         <div>
-          <button className='button-design bg-green-500 text-white' type='submit' onClick={handleSubmit}>SignUp</button>
-          <button className='button-design bg-blue-500 text-white'> Continue with Google</button>
+          <button className='button-design bg-blue-500 text-white' type='submit' onClick={handleSubmit}>SignUp</button>
+         <GoogleAuth />
         </div>
         <div className='flex w-full py-2 '>
           <p>Have an account?  <Link to='/sign-in' className='text-blue-500'> SignIn </Link></p>

@@ -17,7 +17,13 @@ export const api = createApi({
     // auth endpoints
     login: PostEndpoint(builder, "/auth/signIn"),
     signUp: PostEndpoint(builder, "/auth/signUp"),
+    signWithGoogle: PostEndpoint(builder, "/auth/google"),
   }),
 });
 
-export const { useGetAllUsersQuery, useLoginMutation, useSignUpMutation } = api;
+export const {
+  useGetAllUsersQuery,
+  useLoginMutation,
+  useSignUpMutation,
+  useSignWithGoogleMutation,
+} = api;
