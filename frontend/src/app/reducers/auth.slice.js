@@ -5,7 +5,7 @@ export const authSlice = createSlice({
   initialState: {
     loading: false,
     error: null,
-    currentUser: {},
+    currentUser: null,
   },
   reducers: {
     signInSuccess(state, action) {
