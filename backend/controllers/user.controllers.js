@@ -1,5 +1,6 @@
 import express from "express";
 import { userModel } from "../models/user.model.js";
+import { errorHandler } from "../Utils/error.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -10,5 +11,21 @@ export const getAllUsers = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json(error.message);
+  }
+};
+
+export const updateUserAvatar = async (req, res, next) => {
+  try {
+    const { avatar, UserId } = req.body;
+    if (!UserId || !avatar)
+      next(errorHandler(400, "avatar and userId is required"));
+    const targetUser = await userModel.findById(UserId);
+    if (!targetUser) next(errorHandler(400, "this user does not found"));
+    targetUser.avatar = avatar;
+    await targetUser.save();
+    return res.status(200).json("successfully updated the profile");
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 };

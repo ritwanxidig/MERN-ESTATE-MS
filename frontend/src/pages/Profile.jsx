@@ -1,8 +1,10 @@
 import FormGroup from '../components/FormGroup'
 import { useSelector } from 'react-redux'
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { Avatar, Typography } from 'antd'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { app } from '../firebase'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 
@@ -19,6 +21,46 @@ const validationScheme = yup.object().shape({
 const Profile = () => {
   const { Title } = Typography;
   const { currentUser } = useSelector(state => state.auth);
+  const [uploadedFile, setUploadedFile] = React.useState(undefined);
+  const [uploadPerc, setUploadPerc] = React.useState(0);
+  const [fileUploadError, setFileUploadError] = React.useState(false)
+
+  const fileRef = useRef(null)
+
+
+  React.useEffect(() => {
+    if (uploadedFile) {
+      handleUploadedFile(uploadedFile);
+    }
+  }, [uploadedFile]);
+
+  const handleUploadedFile = (file) => {
+    const storage = getStorage(app);
+    console.log(storage);
+    // give unique name the file
+    const fileName = new Date().getTime() + file.name
+    // storage ref
+    const storageRef = ref(storage, fileName);
+    // upload task
+    const uploadTask = uploadBytesResumable(storageRef, uploadedFile);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+        setUploadPerc(Math.floor(progress));
+      },
+      (error) => {
+        setFileUploadError(true)
+        console.log(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(res => {
+          setFieldValue('avatar', res);
+          console.log(values);
+        })
+      }
+    );
+  }
 
 
 
@@ -35,7 +77,7 @@ const Profile = () => {
     }
   });
 
-  const { values, errors, touched, handleChange, handleSubmit } = formik;
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik;
 
 
 
@@ -43,8 +85,10 @@ const Profile = () => {
   return (
     <div className='flex flex-col justify-center items-center w-full mt-4'>
       <Title level={2}>Profile</Title>
-      <Avatar size={64} src={values.avatar} />
-      {errors.avatar && <div className='text-sm text-red-600'>{errors.avatar}</div>}
+      <input type='file' onChange={(e) => setUploadedFile(e.target.files[0])} className='hidden' accept='image/*' hidden ref={fileRef} />
+      <Avatar size={64} src={values.avatar} onClick={() => fileRef.current.click()} />
+      {uploadPerc > 0 && uploadPerc < 100 && <p className='text-green-500 text-sm mt-2'>Uploaded {uploadPerc}%</p>}
+      {fileUploadError && <div className='text-sm text-red-600'>There is an error while uploading the file ....</div>}
       <div className='flex flex-col w-96  p-4'>
 
         <FormGroup>
