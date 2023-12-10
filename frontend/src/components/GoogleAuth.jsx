@@ -20,8 +20,8 @@ const GoogleAuth = () => {
             const { displayName, email, photoURL } = result.user;
             await signWithGoogle({ name: displayName, email, photo: photoURL }).unwrap().then(res => {
                 console.log(res);
-                signInSuccess(res);
-                // navigate('/')
+                dispatch(signInSuccess(res) );
+                navigate('/')
             }).catch(er => { console.log(res); signInFailure(er) })
 
         } catch (error) {
