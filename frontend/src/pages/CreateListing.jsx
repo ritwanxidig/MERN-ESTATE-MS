@@ -1,8 +1,11 @@
 import FormGroup from '../components/FormGroup';
-import { Typography } from 'antd'
+import { Image, Typography } from 'antd'
 import { useFormik, validateYupSchema } from 'formik'
 import * as yup from 'yup'
 import React from 'react'
+
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
+import { app } from '../firebase.js'
 
 
 
@@ -25,6 +28,58 @@ const validationSchema = yup.object().shape({
 
 const CreateListing = () => {
   const { Title } = Typography;
+  const [files, setFiles] = React.useState([]);
+  const [uploadError, setUploadError] = React.useState(null);
+
+
+  const handleUploadImages = () => {
+    if (files.length > 0 && files.length + values.images.length < 7) {
+      const promises = [];
+      for (const file of files) {
+        promises.push(storeImage(file));
+      }
+      Promise.all(promises)
+        .then(urls => {
+          setFieldValue('images', values.images.concat(urls));
+          setUploadError(null)
+        })
+        .catch(er => {
+          console.log(er);
+          setUploadError(er);
+        })
+    }
+    else {
+      setUploadError("only 6 Images Allowed")
+    }
+  }
+
+  const storeImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const progress = snapshot.bytesTransferred / snapshot.totalBytes * 100
+          const percentage = Math.floor(progress);
+          console.log(percentage);
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((donwloadURL) => {
+              resolve(donwloadURL)
+            })
+        }
+      );
+    })
+  }
+
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -37,7 +92,7 @@ const CreateListing = () => {
       baths: 1,
       parking: false,
       furnished: false,
-      sell: false ,
+      sell: false,
       rent: false,
       offer: false
     },
@@ -48,7 +103,8 @@ const CreateListing = () => {
   });
 
 
-  const { values, errors, touched, handleChange, handleSubmit } = formik
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik
+  console.log(values.images);
 
 
   return (
@@ -120,9 +176,31 @@ const CreateListing = () => {
         <div className='flex flex-col w-full justify-center items-center'>
           <Title level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover</span> </Title>
           <div className='flex w-full gap-2 mt-5'>
-            <input type='file' className='input-form' />
-            <button className='py-2 px-2 rounded-lg font-bold text-white hover:bg-blue-600 transition-all duration-700 bg-blue-500'>Upload</button>
+            <input type='file' onChange={(e) => setFiles(e.target.files)} accept='images/.*' className='input-form' multiple />
+            <button
+              className='button-design2 bg-blue-500 hover:bg-blue-600 text-white'
+              onClick={handleUploadImages}
+            >
+              Upload
+            </button>
           </div>
+          <p><span className='text-red-500 text-sm'>{uploadError && `Error: ${uploadError}`}</span></p>
+          {values.images && values.images.length > 0 ? (
+            <div className='flex flex-col gap-4 w-full'>
+              {values.images.map(imgUrl => (
+                <div className='flex w-full justify-between gap-3 items-center border-b-2'>
+                  <Image
+                    width={50}
+                    src={imgUrl}
+                    className='flex'
+                  />
+                  <button className='px-2 py-1 rounded-xl bg-red-500 hover:bg-red-400 text-white transition-all'>
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
           <button type='submit' onClick={handleSubmit} className="button-design bg-green-500 hover:bg-green-600 transition-all duration-700 font-semibold text-white">Submit</button>
         </div>
       </div>
