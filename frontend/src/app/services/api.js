@@ -20,14 +20,19 @@ export const api = createApi({
     signWithGoogle: PostEndpoint(builder, "/auth/google"),
 
     // users endpoint
+    updateUser: UpdateEndpoint(builder, "/users"),
     updateUserAvatar: UpdateEndpoint(builder, "/users/updateAvatar"),
   }),
 });
 
 export const {
-  useGetAllUsersQuery,
+  // hooks for auth
   useLoginMutation,
   useSignUpMutation,
   useSignWithGoogleMutation,
+
+  // hooks for users
+  useGetAllUsersQuery,
   useUpdateUserAvatarMutation,
+  useUpdateUserMutation,
 } = api;

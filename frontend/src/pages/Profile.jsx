@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { app } from '../firebase'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
-import { useUpdateUserAvatarMutation } from '../app/services/api'
+import { useUpdateUserAvatarMutation, useUpdateUserMutation } from '../app/services/api'
 import { updateAvatar } from '../app/reducers/auth.slice'
 
 
@@ -16,7 +16,7 @@ import { updateAvatar } from '../app/reducers/auth.slice'
 const validationScheme = yup.object().shape({
   username: yup.string().required('username is required'),
   email: yup.string().email('insert valid email address').required('Email is required'),
-  password: yup.string().required('password is required'),
+  password: yup.string(),
   avatar: yup.string()
 })
 
@@ -28,7 +28,8 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = React.useState(false);
   const dispatch = useDispatch();
 
-  const [updateUserAvatar, { isLoading: updating }] = useUpdateUserAvatarMutation();
+  const [updateUserAvatar, { isLoading: updatingAvatar }] = useUpdateUserAvatarMutation();
+  const [updateUser, { isLoading: upadatingUsr }] = useUpdateUserMutation();
 
   const fileRef = useRef(null)
 
@@ -84,7 +85,17 @@ const Profile = () => {
     },
     validationSchema: validationScheme,
     onSubmit: async (values) => {
-      console.log(values);
+      const id = currentUser._id
+      await updateUser({
+        id, ...{
+          username: values.username,
+          email: values.email,
+          avatar: values.avatar,
+          password: values.password ? values.password : undefined
+        }
+      }).unwrap()
+        .then(res => console.log(res))
+        .catch(er => console.log(er))
     }
   });
 
