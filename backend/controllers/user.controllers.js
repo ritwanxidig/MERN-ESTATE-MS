@@ -16,10 +16,10 @@ export const getAllUsers = async (req, res) => {
 
 export const updateUserAvatar = async (req, res, next) => {
   try {
-    const { avatar, UserId } = req.body;
-    if (!UserId || !avatar)
-      next(errorHandler(400, "avatar and userId is required"));
-    const targetUser = await userModel.findById(UserId);
+    const { avatar } = req.body;
+    const { id } = req.params;
+    if (!avatar) next(errorHandler(400, "avatar and userId is required"));
+    const targetUser = await userModel.findById(id);
     if (!targetUser) next(errorHandler(400, "this user does not found"));
     targetUser.avatar = avatar;
     await targetUser.save();

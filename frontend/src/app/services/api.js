@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Tags, QueryEndpoint, PostEndpoint } from "./helpers";
+import { Tags, QueryEndpoint, PostEndpoint, UpdateEndpoint } from "./helpers";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
@@ -18,6 +18,9 @@ export const api = createApi({
     login: PostEndpoint(builder, "/auth/signIn"),
     signUp: PostEndpoint(builder, "/auth/signUp"),
     signWithGoogle: PostEndpoint(builder, "/auth/google"),
+
+    // users endpoint
+    updateUserAvatar: UpdateEndpoint(builder, "/users/updateAvatar"),
   }),
 });
 
@@ -26,4 +29,5 @@ export const {
   useLoginMutation,
   useSignUpMutation,
   useSignWithGoogleMutation,
+  useUpdateUserAvatarMutation,
 } = api;

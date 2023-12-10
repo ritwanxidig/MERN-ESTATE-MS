@@ -1,5 +1,5 @@
 import FormGroup from '../components/FormGroup'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { Avatar, Typography } from 'antd'
 import React, { useRef } from 'react'
@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'
 import { app } from '../firebase'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { useUpdateUserAvatarMutation } from '../app/services/api'
+import { updateAvatar } from '../app/reducers/auth.slice'
 
 
 
@@ -23,7 +25,10 @@ const Profile = () => {
   const { currentUser } = useSelector(state => state.auth);
   const [uploadedFile, setUploadedFile] = React.useState(undefined);
   const [uploadPerc, setUploadPerc] = React.useState(0);
-  const [fileUploadError, setFileUploadError] = React.useState(false)
+  const [fileUploadError, setFileUploadError] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const [updateUserAvatar, { isLoading: updating }] = useUpdateUserAvatarMutation();
 
   const fileRef = useRef(null)
 
@@ -55,8 +60,14 @@ const Profile = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(res => {
+          // UPDATE THE VALUE OF THE AVATAR IN THE FORMIK
           setFieldValue('avatar', res);
-          console.log(values);
+          // GETTING THE ID OF THE CURRENT USER TO UPDATE THE AVATAR IN DB
+          const id = currentUser._id;
+          // UPDATING THE VALUE OF AVATAR BOTH IN DB AND REDUX STORE OF CURRENT USER
+          updateUserAvatar({ id, ...{ avatar: res } })
+            .unwrap().then(ress => { dispatch(updateAvatar({ avatar: res })) })
+            .catch(er => console.log(er));
         })
       }
     );

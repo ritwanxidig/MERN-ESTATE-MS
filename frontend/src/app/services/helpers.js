@@ -16,3 +16,13 @@ export const PostEndpoint = (builder, query) => {
     }),
   });
 };
+
+export const UpdateEndpoint = (builder, query) => {
+  return builder.mutation({
+    query: ({ id, ...values }) => ({
+      url: `${query}/${id}`,
+      method: "PUT",
+      body: values,
+    }),
+  });
+};
