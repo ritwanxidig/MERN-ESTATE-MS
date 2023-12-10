@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { app } from '../firebase'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
-import { useDeleteUserMutation, useUpdateUserAvatarMutation, useUpdateUserMutation } from '../app/services/api'
+import { useDeleteUserMutation, useSignOutMutation, useUpdateUserAvatarMutation, useUpdateUserMutation } from '../app/services/api'
 import { signOut, updateAvatar, updateUserSuccess } from '../app/reducers/auth.slice'
 
 
@@ -31,6 +31,7 @@ const Profile = () => {
   const [updateUserAvatar, { isLoading: updatingAvatar, error: updateAvatarError }] = useUpdateUserAvatarMutation();
   const [updateUser, { isLoading: upadatingUsr, error: updateUserError }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: deletingUser, error: deletingUserError }] = useDeleteUserMutation();
+  const [signOutUser] = useSignOutMutation();
 
   const fileRef = useRef(null)
 
@@ -109,8 +110,8 @@ const Profile = () => {
   }
 
   const handleSignOut = async () => {
+    await signOutUser().unwrap();
     dispatch(signOut());
-    window.location.reload();
   }
 
 

@@ -24,6 +24,7 @@ export const api = createApi({
     login: PostEndpoint(builder, "/auth/signIn"),
     signUp: PostEndpoint(builder, "/auth/signUp"),
     signWithGoogle: PostEndpoint(builder, "/auth/google"),
+    signOut: PostEndpoint(builder, "/auth/signOut"),
 
     // users endpoint
     updateUser: UpdateEndpoint(builder, "/users"),
@@ -37,6 +38,7 @@ export const {
   useLoginMutation,
   useSignUpMutation,
   useSignWithGoogleMutation,
+  useSignOutMutation,
 
   // hooks for users
   useGetAllUsersQuery,

@@ -30,8 +30,7 @@ export const authSlice = createSlice({
       state.currentUser = null;
       state.loading = false;
       state.error = null;
-
-     
+      window.location.reload();
     },
   },
 });
