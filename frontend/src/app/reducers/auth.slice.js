@@ -18,10 +18,16 @@ export const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    updateUserSuccess(state, action) {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
     updateAvatar(state, action) {
       state.currentUser.avatar = action.payload.avatar;
     },
   },
 });
 
-export const { signInFailure, signInSuccess, updateAvatar } = authSlice.actions;
+export const { signInFailure, signInSuccess, updateUserSuccess, updateAvatar } =
+  authSlice.actions;

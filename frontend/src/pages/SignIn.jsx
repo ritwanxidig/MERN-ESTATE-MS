@@ -35,7 +35,7 @@ const SignIn = () => {
           .then(res => {
             dispatch(signInSuccess(res))
             // alert("Log in successfully");
-            // navigate('/')
+            navigate('/')
           })
           .catch(er => {
             console.log(er);
