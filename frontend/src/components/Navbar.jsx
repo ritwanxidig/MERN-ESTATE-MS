@@ -1,9 +1,11 @@
 import React from 'react'
-import { Input } from 'antd'
+import { Avatar, Input } from 'antd'
+import { useSelector } from 'react-redux'
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
 
 
 const Navbar = () => {
+    const { currentUser } = useSelector(state => state.auth)
     return (
         <nav
             className="relative flex w-full flex-wrap items-center justify-between bg-neutral-100 py-2 px-4 text-neutral-500 shadow-lg hover:text-neutral-700 focus:text-neutral-700 dark:bg-neutral-600 lg:py-4">
@@ -26,14 +28,16 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex gap-4'>
-                    <Link
-                        to='/sign-in'
-                        className='bg-green-500 rounded-full px-4 py-1 text-white '
-                    >SignIn</Link>
-                    <Link
-                        to='/sign-up'
-                        className='bg-blue-500 rounded-full px-4 py-1 text-white '
-                    >SignUp</Link>
+                    {currentUser && Object.keys(currentUser).length > 0 ?
+                        <Link to='/profile'>
+                            <Avatar size={'default'} src={currentUser.avatar} />
+                        </Link>
+                        :
+                        <Link
+                            to='/sign-up'
+                            className='bg-blue-500 rounded-full px-4 py-1 text-white '
+                        >SignUp</Link>
+                    }
                 </div>
             </div>
         </nav>
