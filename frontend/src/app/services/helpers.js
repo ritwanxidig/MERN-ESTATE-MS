@@ -26,3 +26,12 @@ export const UpdateEndpoint = (builder, query) => {
     }),
   });
 };
+
+export const DeleteEndpoint = (builder, query) => {
+  return builder.mutation({
+    query: (id) => ({
+      url: `${query}/${id}`,
+      method: "DELETE",
+    }),
+  });
+};

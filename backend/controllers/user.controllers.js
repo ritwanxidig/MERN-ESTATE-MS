@@ -60,3 +60,17 @@ export const updateUserAvatar = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, "You are not the owner"));
+  try {
+    const { id } = req.params;
+    await userModel.findByIdAndDelete(id);
+    res.clearCookie("access_token");
+    return res.status(200).json("Deleted successfully");
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

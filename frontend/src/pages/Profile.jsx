@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom'
 import { app } from '../firebase'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
-import { useUpdateUserAvatarMutation, useUpdateUserMutation } from '../app/services/api'
-import { updateAvatar, updateUserSuccess } from '../app/reducers/auth.slice'
+import { useDeleteUserMutation, useUpdateUserAvatarMutation, useUpdateUserMutation } from '../app/services/api'
+import { signOut, updateAvatar, updateUserSuccess } from '../app/reducers/auth.slice'
 
 
 
@@ -30,6 +30,7 @@ const Profile = () => {
 
   const [updateUserAvatar, { isLoading: updatingAvatar, error: updateAvatarError }] = useUpdateUserAvatarMutation();
   const [updateUser, { isLoading: upadatingUsr, error: updateUserError }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: deletingUser, error: deletingUserError }] = useDeleteUserMutation();
 
   const fileRef = useRef(null)
 
@@ -101,6 +102,17 @@ const Profile = () => {
 
   const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik;
 
+  const handleDelete = async () => {
+    await deleteUser(currentUser._id).unwrap()
+      .then(res => { console.log(res); dispatch(signOut()) })
+      .catch(er => { console.log(er); })
+  }
+
+  const handleSignOut = async () => {
+    dispatch(signOut());
+    window.location.reload();
+  }
+
 
 
 
@@ -134,8 +146,8 @@ const Profile = () => {
           <button className='button-design bg-green-600 text-white'>Create Listing</button>
         </div>
         <div className='flex w-full justify-between items-center mt-2'>
-          <Link className='text-red-600'>Delete Account</Link>
-          <Link className='text-blue-600'>SignOut</Link>
+          <button onClick={handleDelete} className='text-red-600'>Delete Account</button>
+          <button onClick={handleSignOut} className='text-blue-600'>SignOut</button>
         </div>
         <div className='flex justify-center items-center w-full text-sm text-red-600'>{updateUserError ? `Error: ${updateUserError.data.message}` : ''}</div>
         <div className='flex justify-center items-center w-full text-sm text-red-600'>{updateAvatarError ? `Error: ${updateAvatarError.data.message}` : ''}</div>

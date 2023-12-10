@@ -1,5 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Tags, QueryEndpoint, PostEndpoint, UpdateEndpoint } from "./helpers";
+import {
+  Tags,
+  QueryEndpoint,
+  PostEndpoint,
+  UpdateEndpoint,
+  DeleteEndpoint,
+} from "./helpers";
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
@@ -22,6 +28,7 @@ export const api = createApi({
     // users endpoint
     updateUser: UpdateEndpoint(builder, "/users"),
     updateUserAvatar: UpdateEndpoint(builder, "/users/updateAvatar"),
+    deleteUser: DeleteEndpoint(builder, "/users"),
   }),
 });
 
@@ -35,4 +42,5 @@ export const {
   useGetAllUsersQuery,
   useUpdateUserAvatarMutation,
   useUpdateUserMutation,
+  useDeleteUserMutation,
 } = api;
