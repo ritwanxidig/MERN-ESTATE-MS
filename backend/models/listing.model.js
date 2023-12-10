@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+import mongoose from "mongoose";
 
 const listingScheme = new mongoose.Schema(
   {
@@ -22,7 +22,11 @@ const listingScheme = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    bathRooms: {
+    bathrooms: {
+      type: Number,
+      required: true,
+    },
+    bedrooms: {
       type: Number,
       required: true,
     },
@@ -39,14 +43,14 @@ const listingScheme = new mongoose.Schema(
       required: true,
     },
     offer: {
-      type: String,
+      type: Boolean,
       required: true,
     },
     imageUrls: {
-      type: String,
+      type: Array,
       required: true,
     },
-    useRef: {
+    userRef: {
       type: String,
       required: true,
     },
@@ -54,4 +58,4 @@ const listingScheme = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Listing = mongoose.model("Listing", listingScheme);
+export const listingModel = mongoose.model("Listing", listingScheme);
