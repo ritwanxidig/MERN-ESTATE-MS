@@ -30,6 +30,9 @@ export const api = createApi({
     updateUser: UpdateEndpoint(builder, "/users"),
     updateUserAvatar: UpdateEndpoint(builder, "/users/updateAvatar"),
     deleteUser: DeleteEndpoint(builder, "/users"),
+
+    // listings endpoint
+    createListing: PostEndpoint(builder, "/listings"),
   }),
 });
 
@@ -45,4 +48,7 @@ export const {
   useUpdateUserAvatarMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+
+  // hoooks for listings
+  useCreateListingMutation,
 } = api;

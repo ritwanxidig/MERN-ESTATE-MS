@@ -1,7 +1,9 @@
 import FormGroup from '../components/FormGroup';
+import { useCreateListingMutation } from '../app/services/api.js'
 import { Image, Spin, Typography } from 'antd'
 import { useFormik, validateYupSchema } from 'formik'
 import * as yup from 'yup'
+import { useSelector } from 'react-redux';
 import React from 'react'
 
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
@@ -13,8 +15,8 @@ const validationSchema = yup.object().shape({
   name: yup.string().required('name is required'),
   description: yup.string().required('description is required'),
   address: yup.string().required('address is required'),
-  regularPrice: yup.number().required('price is required'),
-  // discountPrice: yup.number().required('price is required'),
+  regularPrice: yup.number().required('price is required').min(1, "value must be greater than 1"),
+  discountPrice: yup.number().required('price is required').min(1, "value must be greater than 1"),
   images: yup.array().required('images is required'),
   beds: yup.number().required('beds is required'),
   baths: yup.number().required('baths is required'),
@@ -22,6 +24,7 @@ const validationSchema = yup.object().shape({
   furnished: yup.boolean().required('furnished is required'),
   sell: yup.boolean().required('sell is required'),
   rent: yup.boolean().required('rent is required'),
+  type: yup.string().required('type is required'),
   offer: yup.boolean().required('offer is required'),
 })
 
@@ -32,6 +35,9 @@ const CreateListing = () => {
   const [uploadError, setUploadError] = React.useState(null);
   const [uploadingState, setUploadingState] = React.useState(false)
   const [uploadPerc, setUploadPerc] = React.useState()
+  const { currentUser } = useSelector(state => state.auth)
+
+  const [createListing, { isLoading: isAdding }] = useCreateListingMutation();
 
 
   const handleUploadImages = () => {
@@ -91,6 +97,13 @@ const CreateListing = () => {
     setFieldValue('images', updatedImages);
   }
 
+  const handleChangeType = (e) => {
+    if (e.target.name === 'sell' || e.target.name === 'rent') {
+      setFieldValue('type', e.target.name);
+      handleChange(e);
+    }
+  }
+
 
   const formik = useFormik({
     initialValues: {
@@ -98,19 +111,42 @@ const CreateListing = () => {
       description: '',
       address: '',
       regularPrice: 0.0,
-      // discountPrice: 0,
+      discountPrice: 0,
       images: [],
       beds: 1,
       baths: 1,
       parking: false,
       furnished: false,
       sell: false,
+      type: '',
       rent: false,
       offer: false
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log(values)
+    onSubmit: async (values, { resetForm }) => {
+      const payload = {
+        name: values.name,
+        description: values.description,
+        address: values.address,
+        regularPrice: values.regularPrice,
+        discountPrice: values.discountPrice,
+        imageUrls: values.images,
+        bathrooms: values.baths,
+        bedrooms: values.beds,
+        furnished: values.furnished,
+        parking: values.parking,
+        type: values.type,
+        offer: values.offer,
+        userRef: currentUser._id
+      }
+      try {
+        await createListing(payload)
+          .unwrap()
+          .then(res => { console.log(res); resetForm(); })
+          .catch(er => console.log(er))
+      } catch (error) {
+        console.log(error)
+      }
     }
   });
 
@@ -120,39 +156,40 @@ const CreateListing = () => {
 
   return (
     <div className='flex w-full flex-col p-4 max-w-7xl mx-auto'>
+      <Spin spinning={isAdding} fullscreen />
       <Title level={3} className='text-center font-bold'>Create Listing</Title>
       <div className='flex flex-col md:flex-row justify-between items-start gap-5'>
         <div className="flex flex-col w-full">
           {/* First three column forms */}
           <FormGroup>
             <label htmlFor="name" className='font-semibold'>Name</label>
-            <input type='text' name='name' value={values.name} onChange={handleChange} className='input-form' />
+            <input type='text' id='name' name='name' value={values.name} onChange={handleChange} className='input-form' />
             {touched.name && errors.name && <div className='text-sm text-red-500'>{errors.name}</div>}
           </FormGroup>
           <FormGroup>
             <label htmlFor="description" className='font-semibold'>Description</label>
-            <textarea name='description' value={values.description} onChange={handleChange} className='input-form max-h-20' />
+            <textarea name='description' id='description' value={values.description} onChange={handleChange} className='input-form max-h-20' />
             {touched.description && errors.description && <div className='text-sm text-red-500'>{errors.description}</div>}
           </FormGroup>
           <FormGroup>
             <label htmlFor="address" className='font-semibold'>Address</label>
-            <input type='text' name='address' value={values.address} onChange={handleChange} className='input-form' />
+            <input type='text' id='address' name='address' value={values.address} onChange={handleChange} className='input-form' />
             {touched.address && errors.address && <div className='text-sm text-red-500'>{errors.address}</div>}
           </FormGroup>
 
           {/* Second five row forms */}
           <div className='grid md:grid-cols-5 sm:grid-cols-2 gap-2 mt-4'>
             <div className='flex gap-1'>
-              <input type="checkbox" checked={values.sell} id="sell" name='sell' onChange={handleChange} className='checkbox-design' />
+              <input type="checkbox" checked={values.type === 'sell'} id="sell" name='sell' onChange={handleChangeType} className='checkbox-design' />
               <label htmlFor="sell">Sell</label>
             </div>
             <div className='flex gap-1'>
-              <input type="checkbox" checked={values.rent} id="rent" name='rent' onChange={handleChange} className='checkbox-design' />
+              <input type="checkbox" checked={values.type === 'rent'} id="rent" name='rent' onChange={handleChangeType} className='checkbox-design' />
               <label htmlFor="rent">Rent</label>
             </div>
             <div className='flex gap-1'>
               <input type="checkbox" checked={values.furnished} id="furnished" name='furnished' onChange={handleChange} className='checkbox-design' />
-              <label htmlFor="funished">Furnished</label>
+              <label htmlFor="furnished">Furnished</label>
             </div>
             <div className='flex gap-1'>
               <input type="checkbox" checked={values.parking} id="parking" name='parking' onChange={handleChange} className='checkbox-design' />
@@ -168,22 +205,27 @@ const CreateListing = () => {
           <div className='grid md:grid-cols-5 sm:grid-cols-2 gap-2 mt-4'>
             <FormGroup>
               <label htmlFor="beds" className='font-semibold'>Beds</label>
-              <input type='number' name='beds' value={values.beds} onChange={handleChange} className='input-form' />
+              <input type='number' id='beds' name='beds' value={values.beds} onChange={handleChange} className='input-form' />
               {touched.beds && errors.beds && <div className='text-sm text-red-500'>{errors.beds}</div>}
             </FormGroup>
             <FormGroup>
               <label htmlFor="baths" className='font-semibold'>Baths</label>
-              <input type='number' name='baths' value={values.baths} onChange={handleChange} className='input-form' />
+              <input type='number' id='baths' name='baths' value={values.baths} onChange={handleChange} className='input-form' />
               {touched.baths && errors.baths && <div className='text-sm text-red-500'>{errors.baths}</div>}
             </FormGroup>
             <FormGroup>
-              <label htmlFor="price" className='font-semibold'>Regular Price</label>
-              <input type='number' name='regularPrice' value={values.regularPrice} onChange={handleChange} placeholder='0.00' className='input-form' />
+              <label htmlFor="regularPrice" className='font-semibold'>Regular Price</label>
+              <input type='number' id='regularPrice' name='regularPrice' value={values.regularPrice} onChange={handleChange} placeholder='0.00' className='input-form' />
               {touched.regularPrice && errors.regularPrice && <div className='text-sm text-red-500'>{errors.regularPrice}</div>}
+            </FormGroup>
+            <FormGroup>
+              <label htmlFor="discountPrice" className='font-semibold'>Discount Price</label>
+              <input type='number' id='discountPrice' name='discountPrice' value={values.discountPrice} onChange={handleChange} placeholder='0.00' className='input-form' />
+              {touched.discountPrice && errors.discountPrice && <div className='text-sm text-red-500'>{errors.discountPrice}</div>}
             </FormGroup>
           </div>
         </div>
-        {/* Last Form of Image upload */}
+        {/* Last section of Image upload in form */}
         <div className='flex flex-col w-full justify-center items-center'>
           <h4 level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover, <br /> image must be less than 2MB</span> </h4>
           <Spin spinning={uploadingState}>
@@ -222,6 +264,7 @@ const CreateListing = () => {
         </div>
       </div>
     </div>
+
   )
 }
 
