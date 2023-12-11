@@ -152,6 +152,7 @@ const Profile = () => {
         </div>
         <div className='flex justify-center items-center w-full text-sm text-red-600'>{updateUserError ? `Error: ${updateUserError.data.message}` : ''}</div>
         <div className='flex justify-center items-center w-full text-sm text-red-600'>{updateAvatarError ? `Error: ${updateAvatarError.data.message}` : ''}</div>
+        <Link to='/listings' className="text-black font-semibold flex w-full justify-center">Show All Listings</Link>
       </div>
     </div>
   )
