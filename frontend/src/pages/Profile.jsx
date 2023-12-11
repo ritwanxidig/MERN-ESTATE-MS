@@ -144,7 +144,7 @@ const Profile = () => {
         </FormGroup>
         <div>
           <button className='button-design bg-gray-600 text-white' type='submit' disabled={upadatingUsr || updatingAvatar} onClick={handleSubmit}>{upadatingUsr || updatingAvatar ? 'Loading...' : 'Update'}</button>
-          <Link to='/create-listing' className='button-design bg-green-600 text-white'>Create Listing</Link>
+          <Link to='/listings/add' className='button-design bg-green-600 text-white'>Create Listing</Link>
         </div>
         <div className='flex w-full justify-between items-center mt-2'>
           <button onClick={handleDelete} className='text-red-600'>Delete Account</button>
