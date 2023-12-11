@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.get("/", IsAuthenticated, getAllListings);
 router.post("/", IsAuthenticated, createListing);
-router.put("/", IsAuthenticated, updateListing);
+router.put("/:id", IsAuthenticated, updateListing);
+router.delete("/:id", IsAuthenticated, deleteListing);
 
 export default router;
