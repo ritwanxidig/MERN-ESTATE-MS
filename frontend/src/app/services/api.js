@@ -34,6 +34,7 @@ export const api = createApi({
     // listings endpoint
     getAllListings: QueryEndpoint(builder, "/listings"),
     createListing: PostEndpoint(builder, "/listings"),
+    deleteListing: DeleteEndpoint(builder, "/listings"),
   }),
 });
 
@@ -53,4 +54,5 @@ export const {
   // hoooks for listings
   useCreateListingMutation,
   useGetAllListingsQuery,
+  useDeleteListingMutation
 } = api;

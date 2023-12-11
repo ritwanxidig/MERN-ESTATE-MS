@@ -1,10 +1,11 @@
-export const Tags = ["Users"];
+export const Tags = ["Users", "Listings"];
 
 export const QueryEndpoint = (builder, query) => {
   return builder.query({
     query: () => query,
-    providesTags: ["Users"],
+    providesTags: Tags,
   });
+  
 };
 
 export const PostEndpoint = (builder, query) => {
@@ -14,6 +15,7 @@ export const PostEndpoint = (builder, query) => {
       method: "POST",
       body,
     }),
+    invalidatesTags: Tags,
   });
 };
 
@@ -24,6 +26,7 @@ export const UpdateEndpoint = (builder, query) => {
       method: "PUT",
       body: values,
     }),
+    invalidatesTags: Tags,
   });
 };
 
@@ -33,5 +36,6 @@ export const DeleteEndpoint = (builder, query) => {
       url: `${query}/${id}`,
       method: "DELETE",
     }),
+    invalidateTags: Tags,
   });
 };

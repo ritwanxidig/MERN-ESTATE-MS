@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createListing,
+  deleteListing,
   getAllListings,
   updateListing,
 } from "../controllers/listing.controller.js";
