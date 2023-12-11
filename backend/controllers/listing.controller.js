@@ -39,3 +39,37 @@ export const getAllListings = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateListing = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    // first check if this listing exists
+    const existListing = await listingModel.findById(id);
+    if (!existListing) return next(errorHandler(404, "listing not found"));
+
+    // then update
+    const data = await listingModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const deleteListing = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    // first check if this listing exists
+    const existListing = await listingModel.findById(id);
+    if (!existListing) return next(errorHandler(404, "listing not found"));
+
+    // then delete
+    const data = await listingModel.findByIdAndDelete(id);
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
