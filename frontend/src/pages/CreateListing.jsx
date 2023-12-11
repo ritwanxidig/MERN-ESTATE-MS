@@ -1,5 +1,5 @@
 import FormGroup from '../components/FormGroup';
-import { Image, Typography } from 'antd'
+import { Image, Spin, Typography } from 'antd'
 import { useFormik, validateYupSchema } from 'formik'
 import * as yup from 'yup'
 import React from 'react'
@@ -30,10 +30,14 @@ const CreateListing = () => {
   const { Title } = Typography;
   const [files, setFiles] = React.useState([]);
   const [uploadError, setUploadError] = React.useState(null);
+  const [uploadingState, setUploadingState] = React.useState(false)
+  const [uploadPerc, setUploadPerc] = React.useState()
 
 
   const handleUploadImages = () => {
     if (files.length > 0 && files.length + values.images.length < 7) {
+      setUploadingState(true);
+      setUploadError(null);
       const promises = [];
       for (const file of files) {
         promises.push(storeImage(file));
@@ -42,14 +46,17 @@ const CreateListing = () => {
         .then(urls => {
           setFieldValue('images', values.images.concat(urls));
           setUploadError(null)
+          setUploadingState(false);
         })
         .catch(er => {
           console.log(er);
           setUploadError(er);
+          setUploadingState(false)
         })
     }
     else {
-      setUploadError("only 6 Images Allowed")
+      setUploadError("only 6 Images Allowed");
+      setUploadingState(false);
     }
   }
 
@@ -77,6 +84,11 @@ const CreateListing = () => {
         }
       );
     })
+  }
+
+  const handleRemoveImageUpload = (index) => {
+    const updatedImages = values.images.filter((_, i) => values.images[i] !== values.images[index]);
+    setFieldValue('images', updatedImages);
   }
 
 
@@ -175,26 +187,31 @@ const CreateListing = () => {
         {/* Last Form of Image upload */}
         <div className='flex flex-col w-full justify-center items-center'>
           <Title level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover</span> </Title>
-          <div className='flex w-full gap-2 mt-5'>
-            <input type='file' onChange={(e) => setFiles(e.target.files)} accept='images/.*' className='input-form' multiple />
-            <button
-              className='button-design2 bg-blue-500 hover:bg-blue-600 text-white'
-              onClick={handleUploadImages}
-            >
-              Upload
-            </button>
-          </div>
+          <Spin spinning={uploadingState}>
+            <div className='flex w-full gap-2 mt-5'>
+              <input type='file' onChange={(e) => setFiles(e.target.files)} accept='images/.*' className='input-form' multiple />
+              <button
+                disabled={uploadingState}
+                className='button-design2 bg-blue-500 hover:bg-blue-600 text-white'
+                onClick={handleUploadImages}
+              >
+                {uploadingState ? 'Uploading...' : 'Upload'}
+              </button>
+            </div>
+          </Spin>
           <p><span className='text-red-500 text-sm'>{uploadError && `Error: ${uploadError}`}</span></p>
           {values.images && values.images.length > 0 ? (
-            <div className='flex flex-col gap-4 w-full'>
-              {values.images.map(imgUrl => (
-                <div className='flex w-full justify-between gap-3 items-center border-b-2'>
+            <div className='flex flex-col gap-4 w-full mt-5'>
+              {values.images.map((imgUrl, i) => (
+                <div key={imgUrl} className='flex w-full justify-between gap-3 py-2 items-center border-b-2'>
                   <Image
                     width={50}
                     src={imgUrl}
                     className='flex'
                   />
-                  <button className='px-2 py-1 rounded-xl bg-red-500 hover:bg-red-400 text-white transition-all'>
+                  <button
+                    onClick={() => handleRemoveImageUpload(i)}
+                    className='px-2 py-1 rounded-xl bg-red-500 hover:bg-red-400 text-white transition-all'>
                     Delete
                   </button>
                 </div>
