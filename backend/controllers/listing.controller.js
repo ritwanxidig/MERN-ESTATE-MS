@@ -18,7 +18,7 @@ export const createListing = async (req, res, next) => {
       imageUrls,
       userRef,
     } = req.body;
-    if (!name || !address || !description || !regularPrice || !discountPrice)
+    if (!name || !address || !regularPrice)
       return next(errorHandler(400, "please fill the all fields"));
 
     const newList = await listingModel.create(req.body);

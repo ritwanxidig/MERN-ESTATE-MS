@@ -16,7 +16,11 @@ const validationSchema = yup.object().shape({
   description: yup.string().required('description is required'),
   address: yup.string().required('address is required'),
   regularPrice: yup.number().required('price is required').min(1, "value must be greater than 1"),
-  discountPrice: yup.number().required('price is required').min(1, "value must be greater than 1"),
+  discountPrice: yup.number()
+    .test('is less than the regular price', 'Discount Price must be less than the regular price', function (value) {
+      const regularPrice = this.parent.regularPrice || 0;
+      return value < regularPrice
+    }),
   images: yup.array().required('images is required'),
   beds: yup.number().required('beds is required'),
   baths: yup.number().required('baths is required'),
@@ -124,12 +128,16 @@ const CreateListing = () => {
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
+      if (values.images.length <= 0) {
+        setFieldError('images', 'you must upload at least one image')
+        return;
+      }
       const payload = {
         name: values.name,
         description: values.description,
         address: values.address,
         regularPrice: values.regularPrice,
-        discountPrice: values.discountPrice,
+        discountPrice: values.offer ? values.discountPrice : 0,
         imageUrls: values.images,
         bathrooms: values.baths,
         bedrooms: values.beds,
@@ -139,6 +147,7 @@ const CreateListing = () => {
         offer: values.offer,
         userRef: currentUser._id
       }
+
       try {
         await createListing(payload)
           .unwrap()
@@ -151,7 +160,7 @@ const CreateListing = () => {
   });
 
 
-  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik;
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue, setFieldError } = formik;
 
 
   return (
@@ -161,21 +170,23 @@ const CreateListing = () => {
       <div className='flex flex-col md:flex-row justify-between items-start gap-5'>
         <div className="flex flex-col w-full">
           {/* First three column forms */}
-          <FormGroup>
-            <label htmlFor="name" className='font-semibold'>Name</label>
-            <input type='text' id='name' name='name' value={values.name} onChange={handleChange} className='input-form' />
-            {touched.name && errors.name && <div className='text-sm text-red-500'>{errors.name}</div>}
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor="description" className='font-semibold'>Description</label>
-            <textarea name='description' id='description' value={values.description} onChange={handleChange} className='input-form max-h-20' />
-            {touched.description && errors.description && <div className='text-sm text-red-500'>{errors.description}</div>}
-          </FormGroup>
-          <FormGroup>
-            <label htmlFor="address" className='font-semibold'>Address</label>
-            <input type='text' id='address' name='address' value={values.address} onChange={handleChange} className='input-form' />
-            {touched.address && errors.address && <div className='text-sm text-red-500'>{errors.address}</div>}
-          </FormGroup>
+          <div>
+            <FormGroup>
+              <label htmlFor="name" className='font-semibold'>Name</label>
+              <input type='text' id='name' name='name' value={values.name} onChange={handleChange} className='input-form' />
+              {touched.name && errors.name && <div className='text-sm text-red-500'>{errors.name}</div>}
+            </FormGroup>
+            <FormGroup>
+              <label htmlFor="description" className='font-semibold'>Description</label>
+              <textarea name='description' id='description' value={values.description} onChange={handleChange} className='input-form max-h-20' />
+              {touched.description && errors.description && <div className='text-sm text-red-500'>{errors.description}</div>}
+            </FormGroup>
+            <FormGroup>
+              <label htmlFor="address" className='font-semibold'>Address</label>
+              <input type='text' id='address' name='address' value={values.address} onChange={handleChange} className='input-form' />
+              {touched.address && errors.address && <div className='text-sm text-red-500'>{errors.address}</div>}
+            </FormGroup>
+          </div>
 
           {/* Second five row forms */}
           <div className='grid md:grid-cols-5 sm:grid-cols-2 gap-2 mt-4'>
@@ -218,16 +229,16 @@ const CreateListing = () => {
               <input type='number' id='regularPrice' name='regularPrice' value={values.regularPrice} onChange={handleChange} placeholder='0.00' className='input-form' />
               {touched.regularPrice && errors.regularPrice && <div className='text-sm text-red-500'>{errors.regularPrice}</div>}
             </FormGroup>
-            <FormGroup>
+            {values.offer && <FormGroup>
               <label htmlFor="discountPrice" className='font-semibold'>Discount Price</label>
               <input type='number' id='discountPrice' name='discountPrice' value={values.discountPrice} onChange={handleChange} placeholder='0.00' className='input-form' />
               {touched.discountPrice && errors.discountPrice && <div className='text-sm text-red-500'>{errors.discountPrice}</div>}
-            </FormGroup>
+            </FormGroup>}
           </div>
         </div>
         {/* Last section of Image upload in form */}
-        <div className='flex flex-col w-full justify-center items-center'>
-          <h4 level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover, <br /> image must be less than 2MB</span> </h4>
+        <div className='flex flex-col w-full'>
+          <h4 level={5} className='text-centr font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover,image must be less than 2MB</span> </h4>
           <Spin spinning={uploadingState}>
             <div className='flex w-full gap-2 mt-5'>
               <input type='file' onChange={(e) => setFiles(e.target.files)} accept='images/.*' className='input-form' multiple />
@@ -239,6 +250,7 @@ const CreateListing = () => {
                 {uploadingState ? 'Uploading...' : 'Upload'}
               </button>
             </div>
+            {errors.images && <div className='text-sm text-red-600'>{errors.images}</div>}
           </Spin>
           <p><span className='text-green-500 text-sm'>{uploadingState && `Uploaded ${uploadPerc}%`}</span></p>
           <p><span className='text-red-500 text-sm'>{uploadError && `Error: ${uploadError}`}</span></p>
