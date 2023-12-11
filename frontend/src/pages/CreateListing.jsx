@@ -49,8 +49,8 @@ const CreateListing = () => {
           setUploadingState(false);
         })
         .catch(er => {
-          console.log(er);
-          setUploadError(er);
+          console.log("firebase image upload error: ", er);
+          setUploadError("Maximum Image must be 2MB");
           setUploadingState(false)
         })
     }
@@ -71,7 +71,7 @@ const CreateListing = () => {
         (snapshot) => {
           const progress = snapshot.bytesTransferred / snapshot.totalBytes * 100
           const percentage = Math.floor(progress);
-          console.log(percentage);
+          setUploadPerc(percentage);
         },
         (error) => {
           reject(error);
@@ -115,8 +115,7 @@ const CreateListing = () => {
   });
 
 
-  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik
-  console.log(values.images);
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = formik;
 
 
   return (
@@ -186,7 +185,7 @@ const CreateListing = () => {
         </div>
         {/* Last Form of Image upload */}
         <div className='flex flex-col w-full justify-center items-center'>
-          <Title level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover</span> </Title>
+          <h4 level={5} className='text-center font-medium'>Images: <span className='font-normal text-sm'>Upload max 6 images, the first one will be the cover, <br /> image must be less than 2MB</span> </h4>
           <Spin spinning={uploadingState}>
             <div className='flex w-full gap-2 mt-5'>
               <input type='file' onChange={(e) => setFiles(e.target.files)} accept='images/.*' className='input-form' multiple />
@@ -199,6 +198,7 @@ const CreateListing = () => {
               </button>
             </div>
           </Spin>
+          <p><span className='text-green-500 text-sm'>{uploadingState && `Uploaded ${uploadPerc}%`}</span></p>
           <p><span className='text-red-500 text-sm'>{uploadError && `Error: ${uploadError}`}</span></p>
           {values.images && values.images.length > 0 ? (
             <div className='flex flex-col gap-4 w-full mt-5'>
