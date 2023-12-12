@@ -36,6 +36,6 @@ export const DeleteEndpoint = (builder, query) => {
       url: `${query}/${id}`,
       method: "DELETE",
     }),
-    invalidateTags: Tags,
+    invalidatesTags: Tags,
   });
 };

@@ -34,7 +34,7 @@ const SpecificListings = () => {
       </Header>
       <Content className='bg-gray-100'>
         <div className="grid md:grid-cols-4 gap-4 p-4 grid-cols-1">
-          {data && data.length > 0 ? data.map(listing => (
+          {data && data?.length > 0 ? data?.map(listing => (
             <Spin spinning={deleting} key={listing._id}>
               <Card
                 actions={[

@@ -32,7 +32,7 @@ export const getAllListings = async (req, res, next) => {
   try {
     const { id } = req.user;
     const data = await listingModel.find({ userRef: id });
-    if (data.length <= 0) return res.status(200).json("no listings");
+    if (data.length <= 0) return res.status(400).json("no listings");
     return res.status(200).json(data);
   } catch (error) {
     console.log(error);

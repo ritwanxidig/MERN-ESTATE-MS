@@ -5,6 +5,7 @@ import { useFormik, validateYupSchema } from 'formik'
 import * as yup from 'yup'
 import { useSelector } from 'react-redux';
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase.js'
@@ -42,6 +43,8 @@ const CreateListing = () => {
   const { currentUser } = useSelector(state => state.auth)
 
   const [createListing, { isLoading: isAdding }] = useCreateListingMutation();
+
+  const navigate = useNavigate();
 
 
   const handleUploadImages = () => {
@@ -151,7 +154,7 @@ const CreateListing = () => {
       try {
         await createListing(payload)
           .unwrap()
-          .then(res => { console.log(res); resetForm(); })
+          .then(res => { console.log(res); navigate('/listings') })
           .catch(er => console.log(er))
       } catch (error) {
         console.log(error)
