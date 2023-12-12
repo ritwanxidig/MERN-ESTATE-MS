@@ -40,6 +40,19 @@ export const getAllListings = async (req, res, next) => {
   }
 };
 
+
+export const getSingleListing = async(req,res,next) => {
+  const { id } = req.params;
+  try {
+    const data = await listingModel.findById(id);
+    if (!data) return next(errorHandler(404, "listing not found"));
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 export const updateListing = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -67,7 +80,7 @@ export const deleteListing = async (req, res, next) => {
 
     // then delete
     const data = await listingModel.findByIdAndDelete(id);
-    return res.status(200).json(data);
+    return res.status(200).json("listing has been deleted successfully");
   } catch (error) {
     console.log(error);
     next(error);
