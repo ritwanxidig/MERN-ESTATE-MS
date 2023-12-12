@@ -5,16 +5,27 @@ const ImageSlider = ({ slides, SliderData }) => {
   const [current, setCurrent] = useState(0);
   const [copy, setCopy] = useState(false);
   const length = slides?.length;
+  console.log(length);
 
   const nextSlide = () => {
-    if (SliderData?.length !== 1) {
+    if (SliderData?.length > 1 && slides?.length > 1) {
       setCurrent(current === length - 1 ? 0 : current + 1);
+      console.log(SliderData?.length);
+      return;
+    }
+    else {
+      return;
     }
   };
 
   const prevSlide = () => {
-    if (SliderData?.length !== 1) {
+    if (SliderData?.length > 1 && slides?.length > 1) {
+      console.log(SliderData?.length);
       setCurrent(current === 0 ? length - 1 : current - 1);
+      return;
+    }
+    else {
+      return;
     }
   };
   useEffect(() => {

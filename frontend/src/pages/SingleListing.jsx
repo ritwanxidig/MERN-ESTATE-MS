@@ -6,17 +6,13 @@ import { BiSolidMap } from "react-icons/bi";
 import { FaBath, FaBed, FaParking } from 'react-icons/fa';
 import { AiFillHome } from 'react-icons/ai';
 import ImageSlider from '../components/ImageSlider'
+import Contact from '../components/Contact';
 
-// Swiper
-import SwiperCore from 'swiper';
-import { Navigation } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css/bundle';
 import { useSelector } from 'react-redux';
 
 
 const SingleListing = () => {
-  SwiperCore.use([Navigation]);
+  const [contact, setContact] = React.useState(false);
   const { id: listingId } = useParams();
   const { data: listing, isFetching: Loading } = useGetSingleListingQuery(listingId);
   const { currentUser } = useSelector(state => state.auth)
@@ -64,11 +60,14 @@ const SingleListing = () => {
             {/* Contact Agent */}
             {/* hiding if the user is not authenticated also if it is the owner */}
             {!currentUser || currentUser._id === listing?.userRef ? null : <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => setContact(true)}
+              hidden={contact}
               className='bg-gradient-to-r from-green-500 via-blue-500 hover:shadow-lg transition my-4 to-purple-500 text-white px-12 py-1 rounded cursor'
             >
               Contact Agent
             </button>}
+            {/* showing text are message if the contact button is clicked */}
+            {contact && <Contact />}
           </div>
         </div>
       </div>
