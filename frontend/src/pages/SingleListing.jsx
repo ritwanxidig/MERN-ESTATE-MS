@@ -12,13 +12,14 @@ import SwiperCore from 'swiper';
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/bundle';
+import { useSelector } from 'react-redux';
 
 
 const SingleListing = () => {
   SwiperCore.use([Navigation]);
   const { id: listingId } = useParams();
   const { data: listing, isFetching: Loading } = useGetSingleListingQuery(listingId);
-  // console.log(listing);
+  const { currentUser } = useSelector(state => state.auth)
   return (
     <>
       <Spin spinning={Loading} fullscreen />
@@ -60,6 +61,14 @@ const SingleListing = () => {
                 <p className='text-sm  font-semibold'>Furnished</p>
               </div>) : null}
             </div>
+            {/* Contact Agent */}
+            {/* hiding if the user is not authenticated also if it is the owner */}
+            {!currentUser || currentUser._id === listing?.userRef ? null : <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className='bg-gradient-to-r from-green-500 via-blue-500 hover:shadow-lg transition my-4 to-purple-500 text-white px-12 py-1 rounded cursor'
+            >
+              Contact Agent
+            </button>}
           </div>
         </div>
       </div>

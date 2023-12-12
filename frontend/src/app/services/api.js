@@ -34,6 +34,7 @@ export const api = createApi({
 
     // listings endpoint
     getAllListings: QueryEndpoint(builder, "/listings"),
+    getUserListings: QueryEndpoint(builder, "/listings/user-listings"),
     getSingleListing: QueryParamEndpoint(builder, "/listings"),
     createListing: PostEndpoint(builder, "/listings"),
     updateListing: UpdateEndpoint(builder, "/listings"),
@@ -58,6 +59,7 @@ export const {
   useCreateListingMutation,
   useUpdateListingMutation,
   useGetAllListingsQuery,
+  useGetUserListingsQuery,
   useGetSingleListingQuery,
   useDeleteListingMutation,
 } = api;

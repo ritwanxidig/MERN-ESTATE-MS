@@ -28,7 +28,7 @@ export const createListing = async (req, res, next) => {
   }
 };
 
-export const getAllListings = async (req, res, next) => {
+export const getUserListings = async (req, res, next) => {
   try {
     const { id } = req.user;
     const data = await listingModel.find({ userRef: id });
@@ -40,8 +40,18 @@ export const getAllListings = async (req, res, next) => {
   }
 };
 
+export const getAllListings = async (req, res, next) => {
+  try {
+    const data = await listingModel.find({});
+    if (data.length <= 0) return res.status(400).json("no listings");
+    return res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
-export const getSingleListing = async(req,res,next) => {
+export const getSingleListing = async (req, res, next) => {
   const { id } = req.params;
   try {
     const data = await listingModel.findById(id);
@@ -51,7 +61,7 @@ export const getSingleListing = async(req,res,next) => {
     console.log(error);
     next(error);
   }
-}
+};
 
 export const updateListing = async (req, res, next) => {
   const { id } = req.params;
