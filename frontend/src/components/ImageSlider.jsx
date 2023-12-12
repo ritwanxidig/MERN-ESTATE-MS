@@ -7,16 +7,20 @@ const ImageSlider = ({ slides, SliderData }) => {
   const length = slides?.length;
 
   const nextSlide = () => {
-    setCurrent(current === length - 1 ? 0 : current + 1);
+    if (SliderData?.length !== 1) {
+      setCurrent(current === length - 1 ? 0 : current + 1);
+    }
   };
 
   const prevSlide = () => {
-    setCurrent(current === 0 ? length - 1 : current - 1);
+    if (SliderData?.length !== 1) {
+      setCurrent(current === 0 ? length - 1 : current - 1);
+    }
   };
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-    }, 3000); 
+    }, 3000);
 
     return () => {
       clearInterval(interval);
@@ -45,8 +49,12 @@ const ImageSlider = ({ slides, SliderData }) => {
         <FaShare className='text-xl' />
       </button>
       <div className='flex w-full justify-between items-center'>
-        <FaChevronLeft className='text-3xl text-white mx-4 cursor-pointer' onClick={prevSlide} />
-        <FaChevronRight className='text-3xl text-white mx-4 cursor-pointer' onClick={nextSlide} />
+        {SliderData.length !== 1 && (
+          <>
+            <FaChevronLeft className='text-3xl text-white mx-4 cursor-pointer' onClick={prevSlide} />
+            <FaChevronRight className='text-3xl text-white mx-4 cursor-pointer' onClick={nextSlide} />
+          </>
+        )}
       </div>
     </div>
   );
