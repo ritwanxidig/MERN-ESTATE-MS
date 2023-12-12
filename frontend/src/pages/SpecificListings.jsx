@@ -42,7 +42,7 @@ const SpecificListings = () => {
               <Card
                 actions={[
                   <Link to={`/listings/edit/${listing._id}`}><FaEdit key="edit" className='ml-12' /></Link>,
-                  <FaEye key="eye" className='ml-12' />,
+                  <Link to={`/listings/${listing._id}`}> <FaEye key="eye" className='ml-12' /></Link>,
                   <button onClick={() => handleRemoveListing(listing._id)}><FaTrash key="trash" className='ml-12' /></button>,
                 ]}
               >
@@ -93,11 +93,11 @@ const SpecificListings = () => {
             </Spin>
           )) : null}
         </div>
-      </Content>
+      </Content >
       <Footer className='bg-gray-100'>
         ALSDJF
       </Footer>
-    </Layout>
+    </Layout >
   )
 }
 

@@ -11,6 +11,7 @@ import PrivateRoute from './components/PrivateRoute'
 import CreateListing from './pages/CreateListing'
 import SpecificListings from './pages/SpecificListings'
 import EditListing from './pages/EditListing'
+import SingleListing from './pages/SingleListing'
 
 const App = () => {
   return (
@@ -30,6 +31,9 @@ const App = () => {
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path='/listings/edit/:id' element={<EditListing />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path='/listings/:id' element={<SingleListing />} />
         </Route>
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />

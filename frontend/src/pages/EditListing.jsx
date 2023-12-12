@@ -160,7 +160,7 @@ const EditListing = () => {
         const id = listingId
         await createListing({ id, ...payload })
           .unwrap()
-          .then(res => { console.log(res); navigate('/listings') })
+          .then(res => { console.log(res); navigate(`/listings/${id}`) })
           .catch(er => console.log(er))
       } catch (error) {
         console.log(error)
