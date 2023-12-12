@@ -67,7 +67,7 @@ const SingleListing = () => {
               Contact Agent
             </button>}
             {/* showing text are message if the contact button is clicked */}
-            {contact && <Contact />}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       </div>
