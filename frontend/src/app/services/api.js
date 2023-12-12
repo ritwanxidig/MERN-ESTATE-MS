@@ -5,6 +5,7 @@ import {
   PostEndpoint,
   UpdateEndpoint,
   DeleteEndpoint,
+  QueryParamEndpoint,
 } from "./helpers";
 
 export const api = createApi({
@@ -33,7 +34,9 @@ export const api = createApi({
 
     // listings endpoint
     getAllListings: QueryEndpoint(builder, "/listings"),
+    getSingleListing: QueryParamEndpoint(builder, "/listings"),
     createListing: PostEndpoint(builder, "/listings"),
+    updateListing: UpdateEndpoint(builder, "/listings"),
     deleteListing: DeleteEndpoint(builder, "/listings"),
   }),
 });
@@ -53,6 +56,8 @@ export const {
 
   // hoooks for listings
   useCreateListingMutation,
+  useUpdateListingMutation,
   useGetAllListingsQuery,
-  useDeleteListingMutation
+  useGetSingleListingQuery,
+  useDeleteListingMutation,
 } = api;

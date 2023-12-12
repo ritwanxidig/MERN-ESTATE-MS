@@ -9,6 +9,9 @@ import { useDeleteListingMutation, useGetAllListingsQuery } from '../app/service
 import Meta from 'antd/es/card/Meta';
 
 
+import { Link } from 'react-router-dom'
+
+
 
 const SpecificListings = () => {
   const { data, isFetching: Loading } = useGetAllListingsQuery();
@@ -33,12 +36,12 @@ const SpecificListings = () => {
         <h1 className='font-bold text-xl text-center'>  My Listings</h1>
       </Header>
       <Content className='bg-gray-100'>
-        <div className="grid md:grid-cols-4 gap-4 p-4 grid-cols-1">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 flex-wrap sm:grid-cols-1 gap-4 p-4 grid-cols-1">
           {data && data?.length > 0 ? data?.map(listing => (
             <Spin spinning={deleting} key={listing._id}>
               <Card
                 actions={[
-                  <FaEdit key="edit" className='ml-12' />,
+                  <Link to={`/listings/edit/${listing._id}`}><FaEdit key="edit" className='ml-12' /></Link>,
                   <FaEye key="eye" className='ml-12' />,
                   <button onClick={() => handleRemoveListing(listing._id)}><FaTrash key="trash" className='ml-12' /></button>,
                 ]}

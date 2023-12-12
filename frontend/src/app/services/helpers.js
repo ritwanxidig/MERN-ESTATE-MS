@@ -5,7 +5,13 @@ export const QueryEndpoint = (builder, query) => {
     query: () => query,
     providesTags: Tags,
   });
-  
+};
+
+export const QueryParamEndpoint = (builder, query) => {
+  return builder.query({
+    query: (id) => `${query}/${id}`,
+    providesTags: Tags,
+  });
 };
 
 export const PostEndpoint = (builder, query) => {

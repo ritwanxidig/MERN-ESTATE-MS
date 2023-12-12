@@ -1,11 +1,11 @@
 import FormGroup from '../components/FormGroup';
-import { useCreateListingMutation } from '../app/services/api.js'
+import { useCreateListingMutation, useGetSingleListingQuery, useUpdateListingMutation } from '../app/services/api.js'
 import { Image, Spin, Typography } from 'antd'
 import { useFormik, validateYupSchema } from 'formik'
 import * as yup from 'yup'
 import { useSelector } from 'react-redux';
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase.js'
@@ -34,7 +34,7 @@ const validationSchema = yup.object().shape({
 })
 
 
-const CreateListing = () => {
+const EditListing = () => {
   const { Title } = Typography;
   const [files, setFiles] = React.useState([]);
   const [uploadError, setUploadError] = React.useState(null);
@@ -42,7 +42,11 @@ const CreateListing = () => {
   const [uploadPerc, setUploadPerc] = React.useState()
   const { currentUser } = useSelector(state => state.auth)
 
-  const [createListing, { isLoading: isAdding }] = useCreateListingMutation();
+  const { id: listingId } = useParams();
+
+  const [createListing, { isLoading: isAdding }] = useUpdateListingMutation();
+  const { data: listing, isFetching: isLoading } = useGetSingleListingQuery(listingId);
+  console.log(listing);
 
   const navigate = useNavigate();
 
@@ -113,21 +117,22 @@ const CreateListing = () => {
 
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      name: '',
-      description: '',
-      address: '',
-      regularPrice: 0.0,
-      discountPrice: 0,
-      images: [],
-      beds: 1,
-      baths: 1,
-      parking: false,
-      furnished: false,
-      sell: false,
-      type: '',
-      rent: false,
-      offer: false
+      name: listing?.name || "",
+      description: listing?.description || "",
+      address: listing?.address || "",
+      regularPrice: listing?.regularPrice || 0.0,
+      discountPrice: listing?.discountPrice || 0,
+      images: listing?.imageUrls || [],
+      beds: listing?.bedrooms || 1,
+      baths: listing?.bathrooms || 1,
+      parking: listing?.parking || false,
+      furnished: listing?.furnished || false,
+      sell: listing?.sell || false,
+      type: listing?.type || '',
+      rent: listing?.rent || false,
+      offer: listing?.offer || false,
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
@@ -152,7 +157,8 @@ const CreateListing = () => {
       }
 
       try {
-        await createListing(payload)
+        const id = listingId
+        await createListing({ id, ...payload })
           .unwrap()
           .then(res => { console.log(res); navigate('/listings') })
           .catch(er => console.log(er))
@@ -168,8 +174,8 @@ const CreateListing = () => {
 
   return (
     <div className='flex w-full flex-col p-4 max-w-7xl mx-auto'>
-      <Spin spinning={isAdding} fullscreen />
-      <Title level={3} className='text-center font-bold'>Create Listing</Title>
+      <Spin spinning={isAdding || isLoading} fullscreen />
+      <Title level={3} className='text-center font-bold'>Update Listing</Title>
       <div className='flex flex-col md:flex-row justify-between items-start gap-5'>
         <div className="flex flex-col w-full">
           {/* First three column forms */}
@@ -283,4 +289,4 @@ const CreateListing = () => {
   )
 }
 
-export default CreateListing
+export default EditListing
