@@ -95,3 +95,5 @@ export const signOut = async (req, res, next) => {
   res.clearCookie("access_token");
   return res.status(200).json("User Logged out successfully");
 };
+
+
