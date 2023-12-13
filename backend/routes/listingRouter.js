@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.get("/", getAllListings);
 router.get("/user-listings", IsAuthenticated, getUserListings);
-router.get("/get", SearchListings);
-router.get("/:id", IsAuthenticated, getSingleListing);
+router.get("/search", SearchListings);
+router.get("/:id", getSingleListing);
 router.post("/", IsAuthenticated, createListing);
 router.put("/:id", IsAuthenticated, updateListing);
 router.delete("/:id", IsAuthenticated, deleteListing);

@@ -59,7 +59,7 @@ const SingleListing = () => {
             </div>
             {/* Contact Agent */}
             {/* hiding if the user is not authenticated also if it is the owner */}
-            {!currentUser || currentUser._id === listing?.userRef ? null : <button
+            {currentUser?._id === listing?.userRef ? null : <button
               onClick={() => setContact(true)}
               hidden={contact}
               className='bg-gradient-to-r from-green-500 via-blue-500 hover:shadow-lg transition my-4 to-purple-500 text-white px-12 py-1 rounded cursor'
@@ -67,7 +67,7 @@ const SingleListing = () => {
               Contact Agent
             </button>}
             {/* showing text are message if the contact button is clicked */}
-            {contact && <Contact listing={listing} />}
+            {contact && <Contact listing={listing} setContact={setContact} />}
           </div>
         </div>
       </div>

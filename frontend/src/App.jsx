@@ -32,9 +32,9 @@ const App = () => {
         <Route element={<PrivateRoute />}>
           <Route path='/listings/edit/:id' element={<EditListing />} />
         </Route>
-        <Route element={<PrivateRoute />}>
-          <Route path='/listings/:id' element={<SingleListing />} />
-        </Route>
+
+        <Route path='/listings/:id' element={<SingleListing />} />
+
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
       </Routes>

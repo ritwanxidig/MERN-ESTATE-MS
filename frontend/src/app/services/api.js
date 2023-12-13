@@ -19,13 +19,12 @@ export const api = createApi({
   }),
   tagTypes: Tags,
   endpoints: (builder) => ({
-    
     // auth endpoints
     login: PostEndpoint(builder, "/auth/signIn"),
     signUp: PostEndpoint(builder, "/auth/signUp"),
     signWithGoogle: PostEndpoint(builder, "/auth/google"),
     signOut: PostEndpoint(builder, "/auth/signOut"),
-    
+
     // users endpoint
     getAllUsers: QueryEndpoint(builder, "/users"),
     updateUser: UpdateEndpoint(builder, "/users"),
@@ -36,6 +35,7 @@ export const api = createApi({
     // listings endpoint
     getAllListings: QueryEndpoint(builder, "/listings"),
     getUserListings: QueryEndpoint(builder, "/listings/user-listings"),
+    getSearchListings: QueryParamEndpoint(builder, "/listings"),
     getSingleListing: QueryParamEndpoint(builder, "/listings"),
     createListing: PostEndpoint(builder, "/listings"),
     updateListing: UpdateEndpoint(builder, "/listings"),
@@ -64,4 +64,5 @@ export const {
   useGetUserListingsQuery,
   useGetSingleListingQuery,
   useDeleteListingMutation,
+  useGetSearchListingsQuery,
 } = api;
