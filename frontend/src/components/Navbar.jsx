@@ -2,6 +2,7 @@ import React from 'react'
 import { Avatar, Input } from 'antd'
 import { useSelector } from 'react-redux'
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
+import SearchInput from './SearchInput'
 
 
 const Navbar = () => {
@@ -24,7 +25,7 @@ const Navbar = () => {
                 <div className='flex gap-2 items-center'>
                     <Link to='/'>Home</Link>
                     <Link to='/about'>About</Link>
-                    <Input placeholder='Search' />
+                    <SearchInput />
                 </div>
 
                 <div className='flex gap-4'>

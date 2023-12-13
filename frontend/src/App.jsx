@@ -12,6 +12,7 @@ import CreateListing from './pages/CreateListing'
 import SpecificListings from './pages/SpecificListings'
 import EditListing from './pages/EditListing'
 import SingleListing from './pages/SingleListing'
+import Search from './pages/Search'
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
+        <Route path='/search' element={<Search />} />
         <Route element={<PrivateRoute />}>
           <Route path='/profile' element={<Profile />} />
         </Route>
